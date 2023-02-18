@@ -1,11 +1,24 @@
 #include <SDL.h>
 #include <libtcod.hpp>
 
+/// Return the data directory.
+auto get_data_dir() -> std::filesystem::path {
+  static auto root_directory = std::filesystem::path{"."};  // Begin at the working directory.
+  while (!std::filesystem::exists(root_directory / "res")) {
+    // If the current working directory is missing the data dir then it will assume it exists in any parent directory.
+    root_directory /= "..";
+    if (!std::filesystem::exists(root_directory)) {
+      throw std::runtime_error("Could not find the data directory.");
+    }
+  }
+  return root_directory / "res";
+};
+
 int main(int argc, char **argv) {
   TCODConsole console(80, 25);
   TCOD_ContextParams params{};
 
-    params.tcod_version = TCOD_COMPILEDVERSION;  // This is required.
+  params.tcod_version = TCOD_COMPILEDVERSION;  // This is required.
   params.console = console.get();  // Derive the window size from the console size.
   params.window_title = "Libtcod Project";
   params.sdl_window_flags = SDL_WINDOW_RESIZABLE;
@@ -15,7 +28,7 @@ int main(int argc, char **argv) {
 
   // Tileset example using a Code Page 437 font.
   // "terminal8x8_gs_ro.png" must be in the working directory.
-  auto tileset = tcod::load_tilesheet("../../res/curses_640x300.png", {16, 16}, tcod::CHARMAP_CP437);
+  auto tileset = tcod::load_tilesheet(get_data_dir() / "curses_640x300.png", {16, 16}, tcod::CHARMAP_CP437);
   params.tileset = tileset.get();
 
   auto context = tcod::Context(params);
