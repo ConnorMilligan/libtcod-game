@@ -35,7 +35,10 @@ int main(int argc, char **argv) {
 
   while (1) {  // Game loop.
     TCOD_console_clear(console.get());
-    tcod::print(console, {0, 0}, "Hello World", std::nullopt, std::nullopt);
+    static constexpr std::array<int, 9> LEGEND = {TCOD_CHARMAP_CP437[218], TCOD_CHARMAP_CP437[196], TCOD_CHARMAP_CP437[191], TCOD_CHARMAP_CP437[179], ' ', TCOD_CHARMAP_CP437[179], TCOD_CHARMAP_CP437[192], TCOD_CHARMAP_CP437[196], TCOD_CHARMAP_CP437[217]};
+    tcod::draw_frame(console, {0, 0, 20, 10}, LEGEND, {{255, 255, 255}}, {{0, 0, 0}});  
+    tcod::print(console, {1, 1}, "Hello World", std::nullopt, std::nullopt);
+  
     context.present(console);  // Updates the visible display.
 
     SDL_Event event;
